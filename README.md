@@ -7,83 +7,108 @@
 ### テスト環境
 
 - Windows 11
-- PowerShell 7.2.6
-- Python 3.10.6
+- Miniconda 4.12.0
 
-### Pythonのインストール
+### Miniconda のインストール
 
-まずScoopをインストールし、ScoopでPythonをインストール。
+Miniconda3 Windows版をインストール。
+
+https://docs.conda.io/en/latest/miniconda.html
+
+(※注) インストーラーを使うこと。Scoop経由のインストールでは pip が SSLエラーを出してうまくいかない
+
+### 環境作成
+
+「Anaconda Powershell Prompt (miniconda3)」を開く。
+
+以下の (A) (B) いずれかの手順でパッケージをインストールなどをする。
+
+(※注) 必ず Anaconda Prompt を使うこと。通常の PowerShell では conda activate コマンドがうまくいかない
+
+#### (A) enviroment.yml で作業環境を作成
+
+enviroment.yml の内容に従って作業用の環境「env-blueqat」「env-wildqat」を作成する:
 
 ```shell
-$ Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
-$ scoop install python
+$ conda create -f env-blueqat.yml
+$ conda create -f env-wildqat.yml
 ```
 
-インストール済みの場合は Pythonとpipなどを最新にアップデートしておく。
+Blueqatを使用する場合は env-blueqat 環境に入る:
 
 ```shell
-$ scoop update python
-$ pip install --upgrade pip setuptools wheel
+$ conda activate env-blueqat
 ```
 
-### Python仮想環境(venv)の作成
-
-このリポジトリのルート作業ディレクトリで venv を作成:
+Wildqatを使用する場合は env-wildqat 環境に入る:
 
 ```shell
-$ cd study-quantum
-$ python -m venv .venv
+$ conda activate env-wildqat
 ```
 
-### パッケージのインストール
+#### (B) いちから作業環境を作成
 
-venv 環境に入る:
+condaコマンドで作業用の環境「env-blueqat」「env-wildqat」を作成する。
 
 ```shell
-$ .\.venv\Scripts\activate
+$ conda create -n env-blueqat python=3.9
+$ conda create -n env-wildqat python=3.7
 ```
 
-以下の (A) (B) いずれかの手順でパッケージをインストールする。
-
-#### (A) requirements.txt の内容を元にパッケージをインストール
-
-requirements.txt の内容に従って pipパッケージをインストール:
+env-blueqat 環境に入り、Pythonバージョンが 3.9 になっていることを確認。
 
 ```shell
-(.venv) $ pip install -r requirements.txt
+$ conda activate env-blueqat
+(env-blueqat) $ python --version
+Python 3.9.12
 ```
 
-#### (B) pipコマンドでパッケージをインストール
-
-venv 環境上に Jupyter Lab と量子計算SDK「Blueqat 1.x」をインストール:
+量子計算SDK「Blueqat」と「Jupyter Lab」をインストール:
 
 ```shell
-(.venv) $ pip install jupyterlab
-(.venv) $ pip install blueqat==1.*
+(env-blueqat) $ pip install blueqat jupyterlab
 ```
 
-requirements.txt を出力:
+enviroment.yml を出力:
 
 ```shell
-(.venv) $ pip freeze > requirements.txt
+(env-blueqat) $ conda env export > env-blueqat.yml
 ```
 
-#### venv終了
-
-最後に venv 環境から出る:
+env-wildqat 環境に入り、Pythonバージョンが 3.7 になっていることを確認。
 
 ```shell
-(.venv) $ deactivate
+$ conda activate env-wildqat
+(env-wildqat) $ python --version
+Python 3.7.13
+```
+
+量子アニーリングSDK「Wildqat」と「Jupyter Lab」をインストール:
+
+```shell
+(env-wildqat) $ pip install wildqat jupyterlab
+```
+
+enviroment.yml を出力:
+
+```shell
+(env-wildqat) $ conda env export > env-wildqat.yml
 ```
 
 ## JupyterLab の起動
 
-venv 環境で下記を実行。
+Blueqat のプログラムを実行する場合は、下記を実行。
 
 ```shell
-(.venv) $ jupyter lab --no-browser
+$ conda activate env-blueqat
+(env-blueqat) $ jupyter lab
 ```
 
-表示されたURLを Control + クリックして、ブラウザで開く (※コンソール端末が Windows Terminal の場合)。
+Wildqat のプログラムを実行する場合は、下記を実行。
 
-終了するには、Ctrl + C キーを押す。
+```shell
+$ conda activate env-wildqat
+(env-wildqat) $ jupyter lab
+```
+
+ブラウザで Jupyter Lab が起動する。Jupyterサーバーを終了するには Ctrl + C キーを押す。
